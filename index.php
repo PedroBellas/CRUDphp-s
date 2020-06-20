@@ -1,47 +1,70 @@
-<?php
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta charset="utf-8" /> 
+		<title>Anatomia HTML</title> 
+		<link rel="stylesheet" type="text/css" href="css/style.css" /> 
+	</head>
+	<body> 
 
-/*destivando todos os avisos de alerta*/
+		<!--Area da Categoria-->
+		<div class="area-cadastro">
+			<nav>
+				<a href="sCat.php" class="tittle-cadastro">Cadastrar Categoria</a>
+			</nav>
+		</div>
+		<section id="categoria" class="list-itens">
+			<?php
 
-error_reporting(0);
-ini_set("display_errors", 0 ); 
+				require_once ('classes\Categoria.php');
 
-/*Definindo variaveis de conexão com o banco*/
+				$cat = Categoria::listAll();
 
-$host = '127.0.0.1';
-$dbname = 'db_nomeBanco';
-$user = 'root';
-$password ='root';
+				foreach ($cat as $value) {
+					echo "<div>	
+							<span>" . $value['nm_categoria'] . "</span>
+							<a class='att-item' href='aCat.php?cod=" . $value["id_categoria"] . "'>
+								<span>Att</span>
+							</a>
+							<a class='del-item' href='dCat.php?cod=" . $value["id_categoria"] . "'>
+								<span>Del</span>
+							</a>
+						</div>";
+				}
 
-/*Conexão via PDO (metodo mais seguro)*/
+				unset($value, $cat);
 
-try{
+			?>			
+		</section>
 
-	$conn = new PDO("mysql:dbname=".$dbname.";host=".$host, $user, $password);/*Criando conexão*/
+		<!--Area do produto-->
+		<div class="area-cadastro">
+			<nav>
+				<a href="sPro.php">Cadastrar Produto</a>	
+			</nav>
+		</div>
+		<section id="produto" class="list-itens">
+			<?php
 
-} catch (PDOException $e){ /*Capturando possiveis erros que podem acontecer*/
+				require_once ('classes\Produto.php');
 
-	echo "Erro de conexão: " . $e->getMessage();/*Exibindo mensagem de erro*/
+				$pro = produto::listAll();
 
-}
+				foreach ($pro as $value) {
+					echo "<div>	
+							<span>" . $value['nm_produto'] . " >> " . $value["nm_categoria"] . "</span>
+							<a class='att-item' href='aPro.php?cod=" . $value["id_produto"] . "'>
+								<span>Att</span>
+							</a>
+							<a class='del-item' href='dPro.php?cod=" . $value["id_produto"] . "'>
+								<span>Del</span>
+							</a>
+						</div>";
+				}
 
-unset($conn);/*Fechando conexão com o banco*/
-
-
-/*Conexão via mysqli*/
-
-$conn = new mysqli($host, $user, $password, $dbname); /*Criando conexão*/
-
-if ($conn->connect_error){ /*Verificando se não houve nenhum erro ao abrir a conexão*/
-
-	die("<br>Erro: ". $conn->connect_error); /*Encerrando a execução por questão de segurança*/
-
-}
-
-echo "Conectado com sucesso!";
-
-$conn->close(); /*Fechando conexão com o banco*/
-
-unset($conn) /*Destruindo a variavel para limpar a memória*/
-
-
-?>
+			?>
+		</section>
+		
+	</body>
+</html>

@@ -1,0 +1,72 @@
+create database db_summer;
+
+use db_summer;
+
+#Retirei a tabela produtos_detalhes por questão de duplicidade e redundancia.
+#Deixei outras coisas que podem estar erradas por questão de regra de negocio a qual eu desconheço.
+#adicionei os mneumonicos ao nome dos campos e tabelas, desculpa.
+
+CREATE TABLE tb_categoria(
+id_categoria INT NOT NULL AUTO_INCREMENT,
+nm_categoria VARCHAR(64) NOT NULL,
+id_categoria_pai INT,
+st_categoria TINYINT NOT NULL,
+CONSTRAINT pk_categoria PRIMARY KEY (id_categoria),
+CONSTRAINT uk_nome_categoria UNIQUE KEY (nm_categoria),
+CONSTRAINT fk_categoria_pai FOREIGN KEY (id_categoria_pai) REFERENCES tb_categoria(id_categoria));
+
+CREATE TABLE tb_produto(
+id_produto INT(11) NOT NULL AUTO_INCREMENT,
+cd_produto VARCHAR(32),
+ds_produto TEXT NOT NULL,
+ds_curta_produto VARCHAR(150),
+nm_produto VARCHAR(100) NOT NULL,
+amigavel VARCHAR(128),
+vl_produto DECIMAL(12,2) NOT NULL,
+qt_produto INT(11) NOT NULL,
+vl_envio FLOAT,
+vl_taxa FLOAT,
+dt_produto TIMESTAMP NOT NULL DEFAULT NOW(),
+id_categoria INT,
+extra TEXT(1000),
+st_produto TINYINT(4) NOT NULL,
+CONSTRAINT pk_produto PRIMARY KEY (id_produto),
+CONSTRAINT uk_codigo_produto UNIQUE KEY (cd_produto),
+CONSTRAINT uk_nome_produto UNIQUE KEY (nm_produto),
+CONSTRAINT fk_categoria_produto FOREIGN KEY (id_categoria) REFERENCES tb_categoria(id_categoria));
+
+CREATE TABLE tb_imagem_produto (
+id_im_produto INT NOT NULL AUTO_INCREMENT,
+id_produto INT NOT NULL,
+im_produto VARCHAR(255) NOT NULL,
+im_principal_produto VARCHAR(20),
+im_tamanho VARCHAR(100),
+dt_im_produto TIMESTAMP NOT NULL DEFAULT NOW(),
+st_imagems TINYINT(4) NOT NULL,
+CONSTRAINT pk_imagem_produto PRIMARY KEY (id_im_produto),
+CONSTRAINT fk_produto_imagem_produto FOREIGN KEY (id_produto) REFERENCES tb_produto(id_produto));
+
+CREATE TABLE tb_cor(
+id_cor INT NOT NULL AUTO_INCREMENT,
+nm_cor VARCHAR(100) NOT NULL,
+cd_cor VARCHAR(6) NOT NULL,
+CONSTRAINT pk_cor PRIMARY KEY (id_cor),
+CONSTRAINT uk_codigo_cor UNIQUE KEY (cd_cor));
+
+CREATE TABLE tb_modelo_produto (
+id_modelo INT(11) NOT NULL AUTO_INCREMENT,
+id_produto INT(11) NOT NULL,
+geom_tamanho VARCHAR(100),
+id_cor INT,
+ds_modelo TEXT(1000),
+vl_preco DECIMAL(12,2),
+geom_altura FLOAT,
+geom_largura FLOAT,
+geom_comprimento FLOAT,
+qt_peso FLOAT,
+qt_disponivel INT(11),
+dt_modelo TIMESTAMP,
+st_modelo TINYINT NOT NULL,
+CONSTRAINT pk_modelo PRIMARY KEY (id_modelo),
+CONSTRAINT fk_cor_modelo FOREIGN KEY (id_cor) REFERENCES tb_cor(id_cor),
+CONSTRAINT fk_produto_modelo FOREIGN KEY (id_produto) REFERENCES tb_produto(id_produto));
